@@ -53,7 +53,7 @@
 					tObj.rows[i].cells[j].innerHTML === tObj.rows[i].cells[nextX].innerHTML;
 			},
 			doRowSpan: function(){
-				var tObj=document.getElementById("BeforeTable");
+				var tObj= $(this.element)[0];
 				for(var i=0; i<tObj.rows.length; i++){
 					if(tObj.rows[i]!=null){
 						for(var j in tObj.rows[i].cells){
@@ -87,7 +87,7 @@
 			},
 			deleteCellsByCol: function(){
 				var s="";
-				var tObj=document.getElementById("BeforeTable");
+				var tObj= $(this.element)[0];
 				for(var i=0; i<tObj.rows.length; i++){
 					if(tObj.rows[i]!=null){
 						for(var j in tObj.rows[i].cells){
@@ -102,7 +102,7 @@
 			},
 			deleteCellsByRow: function(){
 				var deletedCount = 0;
-				var tObj=document.getElementById("BeforeTable");
+				var tObj= $(this.element)[0];
 				for(var i=0; i<tObj.rows.length; i++){
 					if(tObj.rows[parseInt(i)+1]){
 						for(var j in tObj.rows[i].cells){
