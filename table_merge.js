@@ -14,109 +14,77 @@
 		$.extend( f.prototype, {
 			init: function() {
 				var _this = this;
-				var $table = $(this.element);
-				_this.doColSpan($table);
-				_this.doRowSpan();
-				_this.deleteCellsByCol();
-				_this.deleteCellsByRow();
+				var table = $(this.element)[0];
+				_this.doColSpan(table);
+				_this.doRowSpan(table);
 			},
-			doColSpan: function(elm){
-				var colSpanCount = 1;
-				var tObj=elm[0];
-				for(var i=0; i<tObj.rows.length; i++){
-					if(tObj.rows[i]!=null){
-						for(var j in tObj.rows[i].cells){
-							if(tObj.rows[i].cells[j].innerHTML){
-								if(colSpanCount > 1){
-									colSpanCount--;
-									continue;
+			doRowSpan: function(table) {
+				var trs= table.rows;
+				var tr_len=  trs.length;
+				var col= 0;
+				var tds= trs[0].cells;
+				for(var m=0; m< tds.length;m++) {
+					col= col + tds[m].colSpan;
+				}
+				for(var i=i=2; i< trs.length;i++) {
+					for(var j=1; j< col; j++) {
+						var td_col= j;
+						var td= trs[i].cells[td_col];
+						if(td!= null) {
+							var html= $(td).text();
+							var tr_tem= td.parentElement.nextElementSibling;
+							var rowspan= 0;
+							while(tr_tem!= null && i >= td.parentElement.rowIndex-1 ) {
+								var cur= tr_tem.cells[td_col];
+								if($(cur).text()==html && td.nextElementSibling!= null) {
+									$(cur).attr('dup', 'true');
+									rowspan= rowspan + 1;
 								}
-								colSpanCount = this.getColSpanCount(tObj, i, j);
-								if(colSpanCount > 1){
-									tObj.rows[i].cells[j].colSpan = colSpanCount;
+								else {
+									html = '';
+									rowspan= rowspan - 1;
 								}
+								tr_tem= tr_tem.nextElementSibling;
+							}
+							if(rowspan > 0) {
+								$(td).attr('rowspan', rowspan + 1);
 							}
 						}
 					}
 				}
+				$('#' + $(table)[0].id + ' tr td[dup="true"]').remove();
 			},
-			getColSpanCount: function(tObj, i, j) {
-				var colSpanCount = 1,
-					nextX = parseInt(j, 10);
-				while (this.isEqualToNextRightCell(tObj, i, j, ++nextX)) {
-					colSpanCount++;
-				}
-				return colSpanCount;
-			},
-			isEqualToNextRightCell: function(tObj, i, j, nextX){
-				return tObj.rows[i].cells[nextX] &&
-					tObj.rows[i].cells[j].innerHTML === tObj.rows[i].cells[nextX].innerHTML;
-			},
-			doRowSpan: function(){
-				var tObj= $(this.element)[0];
-				for(var i=0; i<tObj.rows.length; i++){
-					if(tObj.rows[i]!=null){
-						for(var j in tObj.rows[i].cells){
-							if(tObj.rows[i].cells[j].innerHTML){
-								var rowSpanCount = this.getRowSpanCount(tObj, i, j);
-								if(rowSpanCount > 1){
-									tObj.rows[i].cells[j].rowSpan = rowSpanCount;
+			doColSpan: function(table) {	
+				var trs= table.rows;
+				var tr_len=  trs.length;
+				for(var i=0; i<tr_len; i++) {
+					var tds= trs[i].cells;
+					var td_len= tds.length;
+					for(var j=0;j<td_len;j++) {
+						var colspan= 0;
+						var td= tds[j];
+						var td_tem= td.nextElementSibling;
+						var html= $(td).text();
+						if(td_tem!== null) {
+							while(td_tem !== null) {
+								var td_tem_html= td_tem.innerText;
+								if(html== td_tem_html) {
+									$(td_tem).attr('dup', 'true');
+									colspan= colspan + 1;
 								}
+								else {
+									html = '';
+								}
+								td_tem= td_tem.nextElementSibling;
+							}
+							if(colspan > 0) {
+								$(td).attr('colspan', colspan + 1);
 							}
 						}
 					}
 				}
-			},
-			getRowSpanCount: function(tObj, i, j){
-				var rowSpanCount = 1;
-				var nextY = parseInt(i);
-				while(true){
-					nextY++;
-					if(this.isEqualToNextUnderCell(tObj, i, j, nextY)){
-						rowSpanCount++;
-						continue;
-					}
-					else{
-						break;
-					}
-				}
-				return rowSpanCount;
-			},
-			isEqualToNextUnderCell: function(tObj, i, j, nextY){
-				return tObj.rows[nextY] && tObj.rows[nextY].cells[j] && tObj.rows[i].cells[j].innerHTML == tObj.rows[nextY].cells[j].innerHTML;
-			},
-			deleteCellsByCol: function(){
-				var s="";
-				var tObj= $(this.element)[0];
-				for(var i=0; i<tObj.rows.length; i++){
-					if(tObj.rows[i]!=null){
-						for(var j in tObj.rows[i].cells){
-							if(tObj.rows[i].cells[j].innerHTML){
-								for(var k = 1; k < tObj.rows[i].cells[j].colSpan; k++){
-									tObj.rows[i].deleteCell(parseInt(j) + 1);
-								}
-							}
-						}
-					}
-				}
-			},
-			deleteCellsByRow: function(){
-				var deletedCount = 0;
-				var tObj= $(this.element)[0];
-				for(var i=0; i<tObj.rows.length; i++){
-					if(tObj.rows[parseInt(i)+1]){
-						for(var j in tObj.rows[i].cells){
-							var rowSpanCount = tObj.rows[i].cells[j].rowSpan;
-							if(rowSpanCount > 1){
-								for(var k in tObj.rows[parseInt(i)+1].cells){
-									if(tObj.rows[i].cells[j].innerHTML == tObj.rows[parseInt(i)+1].cells[k].innerHTML){
-										tObj.rows[parseInt(i)+1].deleteCell(k);
-									}
-								}
-							}
-						}
-					}
-				}
+				$('#' + $(table)[0].id + ' tr td[dup="true"]').remove();
+
 			}
 		});
 		$.fn[ merge ] = function( options ) {
