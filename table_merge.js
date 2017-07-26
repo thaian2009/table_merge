@@ -36,9 +36,11 @@
 							var rowspan= 0;
 							while(tr_tem!= null && i >= td.parentElement.rowIndex-1 ) {
 								var cur= tr_tem.cells[td_col];
-								if($(cur).text()==html && td.nextElementSibling!= null) {
-									$(cur).attr('dup', 'true');
-									rowspan= rowspan + 1;
+								if($(cur).text()==html && td.nextElementSibling!= null && cur!= null) {
+									if(cur.nextElementSibling!= null) {
+										$(cur).attr('dup', 'true');
+										rowspan= rowspan + 1;
+                                    }
 								}
 								else {
 									html = '';
