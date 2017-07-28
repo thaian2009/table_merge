@@ -52,7 +52,6 @@
 								}
 								else {
 									html = '';
-									rowspan= rowspan - 1;
 								}
 								tr_tem= tr_tem.nextElementSibling;
 							}
