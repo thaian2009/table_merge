@@ -38,7 +38,7 @@
 								var cur= tr_tem.cells[td_col];
 								if($(cur).text()==html && td.nextElementSibling!= null && cur!= null) {
 									if(cur.nextElementSibling!= null) {
-										if(cur.colSpan <= 1) {
+										if(cur.colSpan <= 1 && cur.colSpan==td.colSpan) {
 											$(cur).attr('dup', 'true');
 											rowspan= rowspan + 1;
 										}
