@@ -34,8 +34,18 @@
 							var html= $(td).text();
 							var tr_tem= td.parentElement.nextElementSibling;
 							var rowspan= 0;
-							while(tr_tem!= null && i >= td.parentElement.rowIndex-1 ) {
+							var bool= true;
+							while(tr_tem!= null && i >= td.parentElement.rowIndex-1 && bool== true) {
 								var cur= tr_tem.cells[td_col];
+								if(typeof(cur)!= 'undefined') {
+									var td_prev_col= td.previousElementSibling.colSpan;
+									var cur_prev_col= cur.previousElementSibling.colSpan;
+									if(td_prev_col== cur_prev_col) {
+										bool= true;
+									} else {
+										bool= false;
+									}
+								}
 								if($(cur).text()==html && td.nextElementSibling!= null && cur!= null) {
 									if(cur.nextElementSibling!= null) {
 										if(cur.colSpan <= 1 && cur.colSpan==td.colSpan) {
